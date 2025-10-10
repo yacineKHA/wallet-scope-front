@@ -14,27 +14,23 @@
 - [✨ Fonctionnalités](#-fonctionnalités)
 - [🛠️ Technologies utilisées](#️-technologies-utilisées)
 - [🚀 Installation](#-installation)
-- [📱 Utilisation](#-utilisation)
 - [🧪 Comptes de démo](#-comptes-de-démonstration)
 - [🔐 Sécurité](#-sécurité)
 
 ## 🎯 À propos
 
-**Wallet Scope** est une application web moderne de tracking de portefeuilles blockchain. Elle permet de visualiser et suivre plusieurs wallets crypto simultanément avec une interface utilisateur intuitive, un système d'authentification robuste et une architecture scalable pour gérer de multiples adresses blockchain.
+**Wallet Scope** est une application web de tracking de portefeuilles blockchain. Elle permet de visualiser et suivre plusieurs wallets crypto simultanément avec une interface utilisateur simple, et un système d'authentification.
 
-### 🎨 Captures d'écran
 
-*Dashboard de tracking multi-wallets avec interface moderne et thème adaptatif*
-
-### 🏆 Points forts techniques
+*Dashboard de tracking multi-wallets*
 
 - **Architecture Full-Stack** : Frontend Next.js 15 avec backend Express.js
 - **Sécurité avancée** : JWT, sessions sécurisées, rate limiting, helmet
 - **UI/UX moderne** : Composants Radix UI, Tailwind CSS 4, thème adaptatif
 - **Base de données** : Prisma ORM avec SQLite pour stocker les wallets et données utilisateur
 - **Multi-blockchain** : Support pour plusieurs réseaux blockchain
-- **Validation** : Zod pour la validation des adresses et données
-- **Logging** : Winston avec rotation des logs pour le monitoring
+- **Validation** : Zod pour la validation données
+- **Logging** : Winston
 
 ## ✨ Fonctionnalités
 
@@ -45,25 +41,14 @@
 - [x] Protection CSRF et rate limiting
 - [x] Validation des formulaires avec Zod
 
-### 💰 Tracking de Portefeuilles
-- [x] Ajout et suivi de multiples wallets
-- [x] Visualisation des balances en temps réel
-- [x] Historique des transactions
-- [x] Support multi-blockchain (Bitcoin, Ethereum, etc.)
-- [x] Dashboard avec métriques et graphiques
-
 ### 💼 Interface utilisateur
-- [x] Design responsive
-- [x] Composants UI réutilisables (Radix UI)
-- [x] Animations fluides avec Tailwind CSS
-- [x] Formulaires avec validation en temps réel
+- [x] Radix UI
+- [x] Tailwind CSS
 
 ### 🔧 Architecture technique
-- [x] API RESTful sécurisée
 - [x] Middleware de sécurité (Helmet, CORS)
 - [x] Logging structuré avec Winston
 - [x] Base de données relationnelle avec Prisma
-- [x] TypeScript pour la sécurité des types
 
 ## 🛠️ Technologies utilisées
 
@@ -98,70 +83,12 @@
 - npm ou yarn
 - Git
 
-
-### 2. Installation du Backend
-```bash
-cd wallet-scope-back
-npm install
-
-# Configuration de la base de données
-cp .env
-
-# Générer le client Prisma et migrer la DB
-npx prisma generate
-npx prisma migrate dev
-
-# Démarrer le serveur de développement
-npm run dev
-```
-
-### 3. Installation du Frontend
-```bash
-cd ../wallet-scope-front
-npm install
-
-# Démarrer l'application Next.js
-npm run dev
-```
-
 ### 4. Accès à l'application
 - **Frontend** : http://localhost:3000
 - **Backend API** : http://localhost:3005
 
-## 📱 Utilisation
 
-### Démarrage
-1. Accédez à l'application
-2. Créez un compte via la page d'inscription
-3. Connectez-vous avec vos identifiants
-4. Ajoutez vos adresses de wallets blockchain
-5. Visualisez vos portefeuilles et suivez vos balances en temps réel
-
-
-#### Backend (.env)
-```env
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="votre-secret-jwt-super-securise"
-JWT_REFRESH_SECRET="votre-refresh-secret"
-NODE_ENV="development"
-```
-
-#### Frontend (.env.local)
-```env
-NEXT_PUBLIC_API_URL="http://localhost:3005"
-```
-
-## 🧪 Comptes de démonstration
-
-Pour tester rapidement, vous pouvez utiliser ces comptes pré-configurés :
-
-### Utilisateur 1 -
-- **Email :** `bob@demo.com`
-- **Mot de passe :** `demo12345`
-
-## 🔐 Sécurité
-
-Cette application implémente plusieurs couches de sécurité :
+## 🔐 Sécurité backend
 
 - **Authentification JWT** avec refresh tokens
 - **Hachage des mots de passe** avec bcrypt (salt rounds: 12)
@@ -169,9 +96,9 @@ Cette application implémente plusieurs couches de sécurité :
 - **Headers de sécurité** avec Helmet.js
 - **CORS** configuré pour les domaines autorisés
 - **Sessions sécurisées** avec gestion des appareils
-- **Protection des données sensibles** des portefeuilles
 
-## 📁 Structure du projet
+
+## 📁 Structure du projet complet
 
 ```
 wallet-scope/
