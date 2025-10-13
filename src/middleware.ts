@@ -1,27 +1,26 @@
-import axios from "axios";
-import { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const token = req.cookies.get("r_token")?.value;
 
-    const token = req.cookies.get("a_token")?.value;
-    if (!token) {
-        return NextResponse.redirect(new URL("/login", req.url));
-    } else {
-        try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/check-auth`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-        
-            return NextResponse.next();
-        } catch (error) {
-            
-        }
-    }
+  const isAuthPage =
+    pathname.startsWith("/login") || pathname.startsWith("/register");
+  const isProtected = pathname.startsWith("/dashboard");
+
+  if (isAuthPage && token) {
+    const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
+  }
+
+  if (isProtected && !token) {
+    const url = new URL("/login", req.url);
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/login", "/register"],
 };

@@ -9,16 +9,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail, Lock } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
 import CustomInput from "@/components/ui/customInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/validations";
-import { authAPI } from "@/lib/api/auth";
+import { useLogin } from "@/lib/hooks/useLogin";
+import { toast } from "sonner";
+
 
 const LoginPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const {login, isLoginLoading, loginError} = useLogin();
 
   const {
     register,
@@ -29,12 +30,11 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
     try {
-      const response = await authAPI.login(data);
-      console.log(response);
+      await login(data.email, data.password);
+      toast.success("Connexion réussie");
     } catch (error) {
-      console.error(error);
+      toast.error((error as Error).message.toString());
     }
   };
 
@@ -54,7 +54,7 @@ const LoginPage = () => {
             <CustomInput
               label="Adresse email"
               type="email"
-              placeholder="nom@exemple.com"
+              placeholder="nom@mail.com"
               icon={<Mail className="h-4 w-4" />}
               error={errors.email?.message}
               {...register("email")}
@@ -88,9 +88,9 @@ const LoginPage = () => {
             <Button 
               type="submit" 
               className="w-full h-11"
-              disabled={isLoading}
+              disabled={isLoginLoading}
             >
-              {isLoading ? "Connexion..." : "Se connecter"}
+              {isLoginLoading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
 

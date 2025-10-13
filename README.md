@@ -70,12 +70,6 @@
 - **Logging** : Winston avec rotation quotidienne
 - **Validation** : Zod schemas
 
-### DevOps & Outils
-- **Build** : Turbopack (Next.js)
-- **Linting** : ESLint 9
-- **Package Manager** : npm
-- **Database Migrations** : Prisma Migrate
-
 ## 🚀 Installation
 
 ### Prérequis
