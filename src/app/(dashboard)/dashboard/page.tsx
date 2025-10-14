@@ -3,9 +3,9 @@
 import useUser from "@/lib/hooks/useUser";
 
 export default function DashboardPage() {
-    const { user, loading, error } = useUser();
+    const { user, isLoading, isAuthenticated, error } = useUser();
 
-    if (loading) return <div>Chargement...</div>;
+    if (isLoading) return <div>Chargement...</div>;
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (

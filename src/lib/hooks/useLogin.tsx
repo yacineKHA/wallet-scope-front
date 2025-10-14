@@ -3,12 +3,18 @@ import { authAPI } from "../api/auth";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 
-export const useLogin = () => {
+interface UseLoginResponse {
+  login: (email: string, password: string) => Promise<void>;
+  isLoginLoading: boolean;
+  loginError: string | null;
+}
+
+export const useLogin = (): UseLoginResponse => {
   const router = useRouter();
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     setIsLoginLoading(true);
     try {
       await authAPI.login({ email, password });

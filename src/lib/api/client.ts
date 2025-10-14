@@ -1,4 +1,5 @@
 import axios from "axios";
+import { authAPI } from "./auth";
 
 export const apiClient = axios.create({
   baseURL: "/api",
@@ -9,47 +10,47 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
+const excludedUrls = [
+  "/user/login",
+  "/user/signup",
+  "/user/register",
+  "/user/refresh-token",
+  "/user/logout",
+];
 
 apiClient.interceptors.response.use(
-  (response) => {
-    console.info("Response success: ", response);
-    return response;
-  }, // Si requete reussie on retourne la reponse directement
+  // si reponse reussie, on retourne la reponse
+  (response) => response,
+
   async (error) => {
-    const originalRequest = error.config;
-    if (!error.response) return Promise.reject(error); // Si pas de reponse on rejette l'erreur
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+    const isExcluded = excludedUrls.some((url) =>
+      error.config.url?.includes(url)
+    );
 
-    if (error.response.status === 401 && !originalRequest._retry) {
-      console.log("...401 détecté...");
-      //Evite les boucles infinies
-      originalRequest._retry = true;
+    if (isExcluded) {
+      return Promise.reject(error);
+    }
 
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          const interval = setInterval(() => {
-            if (!isRefreshing) {
-              clearInterval(interval);
-              // Quand le refresh est fini, on retente la requête
-              apiClient(originalRequest).then(resolve).catch(reject);
-            }
-          }, 500); // on check toutes les 500ms
-        });
-      }
-      isRefreshing = true;
+    if (error.response.status === 401 && !error.config.retry) {
+      error.config.retry = true;
       try {
-        const response = await apiClient.post("/user/refresh-token"); // nouveau token
-        console.log("Response: ", response);
-        isRefreshing = false;
-        // On réessaye la requête originale
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        isRefreshing = false;
-        // Si le refresh échoue, on redirige vers login
+        await apiClient.post("/user/refresh-token");
+        return apiClient(error.config);
+      } catch (error) {
+        console.error("Refresh token echoué: ", error);
+        try {
+          authAPI.logout();
+        } catch (logoutError) {
+          console.warn("Erreur lors de la déconnexion: ", logoutError);
+        }
+
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       }
     }
     return Promise.reject(error);

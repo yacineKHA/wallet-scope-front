@@ -17,9 +17,8 @@ import { loginSchema, type LoginFormData } from "@/lib/validations";
 import { useLogin } from "@/lib/hooks/useLogin";
 import { toast } from "sonner";
 
-
 const LoginPage = () => {
-  const {login, isLoginLoading, loginError} = useLogin();
+  const { login, isLoginLoading, loginError } = useLogin();
 
   const {
     register,
@@ -68,14 +67,16 @@ const LoginPage = () => {
               error={errors.password?.message}
               {...register("password")}
             />
-            
+
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
                   className="rounded border-input text-primary focus:ring-primary focus:ring-2"
                 />
-                <span className="text-muted-foreground">Se souvenir de moi</span>
+                <span className="text-muted-foreground">
+                  Se souvenir de moi
+                </span>
               </label>
               <button
                 type="button"
@@ -85,8 +86,8 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full h-11"
               disabled={isLoginLoading}
             >
