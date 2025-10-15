@@ -11,7 +11,6 @@ export default function DashboardPage() {
     return (
         <div>
             <h1>Dashboard</h1>
-            {user && <p>Bienvenue {user.username || user.email}</p>}
         </div>
     );
-}
+}  
