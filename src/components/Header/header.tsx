@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "../button";
-import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLogout } from "@/lib/hooks/useLogout";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { getInitials } from "@/utils/utils";
 import { useState } from "react";
 import { UserDropdown } from "./user-dropdown";
-import { DropdownMenu, DropdownMenuTrigger } from "../dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);

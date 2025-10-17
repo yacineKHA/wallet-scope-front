@@ -11,11 +11,10 @@ export const apiClient = axios.create({
 });
 
 const excludedUrls = [
-  "/user/login",
-  "/user/signup",
-  "/user/register",
-  "/user/refresh-token",
-  "/user/logout",
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/logout",
 ];
 
 apiClient.interceptors.response.use(
@@ -37,7 +36,7 @@ apiClient.interceptors.response.use(
     if (error.response.status === 401 && !error.config.retry) {
       error.config.retry = true;
       try {
-        await apiClient.post("/user/refresh-token");
+        await apiClient.post("/auth/refresh");
         return apiClient(error.config);
       } catch (error) {
         console.error("Refresh token echoué: ", error);

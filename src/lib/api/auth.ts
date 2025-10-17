@@ -1,11 +1,17 @@
 import { apiClient } from './client';
 
+interface RegisterData {
+  email: string;
+  password: string;
+  username?: string;
+}
+
 export const authAPI = {
   login: (credentials: { email: string; password: string }) =>
-    apiClient.post('/user/login', credentials),
+    apiClient.post('/auth/login', credentials),
   
-  register: (userData: any) =>
-    apiClient.post('/user/register', userData),
+  register: (userData: RegisterData) =>
+    apiClient.post('/auth/register', userData),
   
-  logout: () => apiClient.post('/user/logout', {}),
+  logout: () => apiClient.post('/auth/logout', {}),
 };
