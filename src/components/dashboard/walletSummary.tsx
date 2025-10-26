@@ -17,7 +17,7 @@ const WalletSummary = ({ walletData }: WalletSummaryProps) => {
         <Card>
             <CardHeader>
                 <CardTitle>{walletData.wallet.walletName}</CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs md:text-xl truncate">
                     {walletData.wallet.walletAddress}
                 </CardDescription>
             </CardHeader>

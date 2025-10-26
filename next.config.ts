@@ -9,6 +9,22 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "logo.moralis.io", // URL de logo de crypto
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.moralis.io", // URL de logo de crypto
+        port: "",
+        pathname: "/**",
+      }
+    ],
+  }
 };
 
 export default nextConfig;
