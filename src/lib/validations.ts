@@ -14,6 +14,14 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   email: z
     .email("Format d'email invalide"),
+  username: z
+    .string()
+    .min(3, "Le nom d'utilisateur doit contenir au moins 3 caractères")
+    .max(20, "Le nom d'utilisateur ne peut pas dépasser 20 caractères")
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores"
+    ),
   password: z
     .string()
     .min(1, "Le mot de passe est requis")

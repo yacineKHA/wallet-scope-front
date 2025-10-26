@@ -8,16 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import CustomInput from "@/components/ui/customInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { useRegister } from "@/lib/hooks/useRegister";
+import { toast } from "sonner";
 
 const SignupPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { signup, isSignupLoading, signupError } = useRegister();
 
   const {
     register,
@@ -28,8 +30,13 @@ const SignupPage = () => {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true);
-
+    try {
+      const response = await signup(data.email, data.username, data.password);
+      console.log("response: ", response)
+      toast.success(`Inscription réussie, Vous pouvez vous connecter`);
+    } catch (error) {
+      toast.error((error as Error).message.toString());
+    }
   };
 
   return (
@@ -55,6 +62,15 @@ const SignupPage = () => {
             />
 
             <CustomInput
+              label="Username"
+              type="text"
+              placeholder="Votre nom d'utilisateur"
+              icon={<User className="h-4 w-4" />}
+              error={errors.username?.message}
+              {...register("username")}
+            />
+
+            <CustomInput
               label="Mot de passe"
               type="password"
               placeholder="Votre mot de passe"
@@ -72,12 +88,12 @@ const SignupPage = () => {
               {...register("confirmPassword")}
             />
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full h-11 mt-5"
-              disabled={isLoading}
+              disabled={isSignupLoading}
             >
-              {isLoading ? "Inscription..." : "S'inscrire"}
+              {isSignupLoading ? "Inscription..." : "S'inscrire"}
             </Button>
           </form>
 
