@@ -7,7 +7,7 @@ const TokenCard = ({ token }: { token: CryptoToken }) => {
   const isPositive: boolean = token.change24h >= 0;
 
   return (
-    <Card className="hover:shadow-md transition-shadow md:h-[60px] md:flex md:flex-row md:items-center">
+    <Card className="hover:shadow-md transition-shadow md:h-[60px] md:flex md:flex-row md:items-center rounded-md bg-black">
       <div className="flex flex-col p-4 md:flex-row md:items-center gap-4 md:w-full">
         <div className="flex items-center gap-3 md:w-[200px]">
           {token.logo && (

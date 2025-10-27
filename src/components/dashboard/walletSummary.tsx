@@ -2,17 +2,12 @@
 
 import { WalletData } from "@/types/wallet";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { use, useEffect } from "react";
 
 interface WalletSummaryProps {
     walletData: WalletData;
 }
 
 const WalletSummary = ({ walletData }: WalletSummaryProps) => {
-
-    useEffect(() => {
-        console.log(walletData);
-    }, [walletData]);
     return (
         <Card>
             <CardHeader>
