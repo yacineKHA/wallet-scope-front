@@ -12,6 +12,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const initAuth = async () => {
         try {
           const response = await apiClient.get("/user/me");
+          console.log("response authProvider: ", response);
           setUser(response.data.data);
         } catch (err) {
           if (err instanceof AxiosError && err.response?.status === 401) {

@@ -8,7 +8,7 @@ import { User } from "@/types/user";
 interface UseUserResponse {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
+  isAuthLoading: boolean;
   error: string | null;
 }
 
