@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useLogout } from "@/lib/hooks/useLogout";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { getInitials } from "@/utils/utils";
@@ -13,19 +12,15 @@ import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
-  const { logout } = useLogout();
+  const { isAuthenticated, user, isAuthLoading } = useAuthStore();
 
-  const handleLogout = () => {
-    logout();
-    toast.info("Déconnexion réussie");
-  };
 
   return (
     <header className="flex justify-between items-center p-10">
       <Link href="/" className="text-2xl font-bold">
         Wallet Scope
       </Link>
+      
 
       {isAuthenticated ? (
         
@@ -40,7 +35,7 @@ const Header = () => {
             </DropdownMenuTrigger>
             <UserDropdown />
           </DropdownMenu>
-          
+
 
           <div className="hidden md:block text-sm">
             <p className="font-medium">{user?.username || user?.email}</p>

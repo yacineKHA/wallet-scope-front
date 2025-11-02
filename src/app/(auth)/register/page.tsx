@@ -10,12 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Mail, Lock, User } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import CustomInput from "@/components/ui/customInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormData } from "@/lib/validations";
-import { useRegister } from "@/lib/hooks/useRegister";
+import useRegister from "@/lib/hooks/useRegister";
 import { toast } from "sonner";
 
 const SignupPage = () => {
@@ -40,7 +39,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center md:mt-20">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold tracking-tight">

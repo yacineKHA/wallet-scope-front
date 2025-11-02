@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import Header from "@/components/Header/header";
 import { Toaster } from "@/components/ui/sonner";
+import AuthProvider from "@/providers/authProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,10 +38,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="container mx-auto px-4 py-8 max-w-6xl">
-            {children}
-          </main>
+          <AuthProvider>
+            <Header />
+            <main className="container mx-auto px-4 py-8 max-w-6xl">
+              {children}
+            </main>
+          </AuthProvider>
           <Toaster
             position="top-center"
             richColors

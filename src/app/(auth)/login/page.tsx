@@ -14,12 +14,11 @@ import CustomInput from "@/components/ui/customInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/validations";
-import { useLogin } from "@/lib/hooks/useLogin";
 import { toast } from "sonner";
+import {useLogin} from "@/lib/hooks/useLogin";
 
 const LoginPage = () => {
   const { login, isLoginLoading, loginError } = useLogin();
-
   const {
     register,
     handleSubmit,
@@ -38,7 +37,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center md:mt-40">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold tracking-tight">

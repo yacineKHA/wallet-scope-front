@@ -5,9 +5,19 @@ import { apiClient } from "../api/client";
 import { useAuthStore } from "@/store/authStore";
 import { User } from "@/types/user";
 
-const useUser = (): { user: User | null, isAuthenticated: boolean, isLoading: boolean, error: string | null } => {
+interface UseUserResponse {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+/**
+ * Hook pour la gestion du user connecté
+ */
+const useUser = (): UseUserResponse => {
   const [error, setError] = useState<string | null>(null);
-  const { user, isAuthenticated, isLoading, setUser, clearUser } = useAuthStore();
+  const { user, isAuthenticated, isAuthLoading, setUser, clearUser } = useAuthStore();
 
   useEffect(() => {
     const fetchUser = async (): Promise<void> => {
@@ -25,7 +35,7 @@ const useUser = (): { user: User | null, isAuthenticated: boolean, isLoading: bo
     fetchUser();
   }, [setUser, clearUser]);
 
-  return { user, isAuthenticated, isLoading, error };
+  return { user, isAuthenticated, isAuthLoading, error };
 };
 
 export default useUser;

@@ -2,41 +2,72 @@ import { useState } from "react";
 import {
   getWallets,
   getWallet,
+  setPrimaryWallet,
+  deleteWallet,
+  addWallet,
 } from "../api/wallet";
 import { Wallet, WalletData } from "@/types/wallet";
 
-export default function useWallet() {
+interface UseWalletResponse {
+  wallets: Wallet[];
+  selectedWallet: Wallet | null;
+  walletData: WalletData | null;
+  isWalletLoading: boolean;
+  walletError: string | null;
+  fetchWallets: () => Promise<OperationResult>;
+  selectWallet: (wallet: Wallet) => Promise<OperationResult>;
+  addNewWallet: (walletAddress: string, walletName: string) => Promise<OperationResult>;
+  deleteWalletById: (walletId: string) => Promise<OperationResult>;
+  setPrimaryWalletId: (walletId: string) => Promise<OperationResult>;
+}
+
+interface OperationResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Hook pour la gestion des wallets
+ */
+export default function useWallet(): UseWalletResponse {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [walletData, setWalletData] = useState<WalletData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isWalletLoading, setIsWalletLoading] = useState(true);
+  const [walletError, setWalletError] = useState<string | null>(null);
 
-  // Fonction pour sélectionner un wallet et récup ses données
-  const selectWallet = async (wallet: Wallet) => {
+  /**
+   * Sélectionne un wallet et récupère ses données
+   * @param wallet - Le wallet à sélectionner
+   * @returns {Promise<OperationResult>} - Réponse succès ou erreur
+   */
+  const selectWallet = async (wallet: Wallet): Promise<OperationResult> => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsWalletLoading(true);
+      setWalletError(null);
       setSelectedWallet(wallet);
       const data = await getWallet(wallet.walletAddress);
       setWalletData(data);
-    } catch (err) {
+      return { success: true };
+    } catch (err: any) {
       console.error("Erreur lors de la récupération du wallet:", err);
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Erreur lors du chargement du wallet";
-      setError(errorMessage);
+    
+      setWalletError("Erreur lors du chargement du wallet");
+      return { success: false, error: err.response.data.message };
+
     } finally {
-      setIsLoading(false);
+      setIsWalletLoading(false);
     }
   };
 
-  // Fonction pour récup tous les wallets
-  const fetchWallets = async () => {
+  /**
+   * Récupère tous les wallets de l'utilisateur connecté
+   * @returns {Promise<OperationResult>} - Réponse succès ou erreur
+   */
+  const fetchWallets = async (): Promise<OperationResult> => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsWalletLoading(true);
+      setWalletError(null);
       const walletsData = await getWallets();
       setWallets(walletsData);
 
@@ -46,32 +77,89 @@ export default function useWallet() {
           walletsData.find((w) => w.isPrimary) || walletsData[0];
         await selectWallet(primaryWallet);
       } else {
-        setIsLoading(false);
+        setIsWalletLoading(false);
       }
-    } catch (err) {
+      return { success: true };
+    } catch (err: any) {
       console.error("Erreur lors de la récupération des wallets: ", err);
-      setError("Erreur lors du chargement des wallets");
-      setIsLoading(false);
+      setWalletError("Erreur lors du chargement des wallets");
+      setIsWalletLoading(false);
+      return { success: false, error: err.response.data.message };
     }
   };
 
-  // Fonction pour rafraîchir les données
-  const refetch = async () => {
-    if (selectedWallet) {
-      await selectWallet(selectedWallet);
-    } else {
+  /**
+   * Ajoute un nouveau wallet
+   * @param walletAddress - L'adresse du wallet à ajouter
+   * @param walletName - Le nom du wallet à ajouter
+   * @returns {Promise<OperationResult>} - Réponse de succès ou erreur
+   */
+  const addNewWallet = async (walletAddress: string, walletName: string): Promise<OperationResult> => {
+    try {
+      setWalletError(null);
+      await addWallet(walletAddress, walletName);
+      
       await fetchWallets();
+
+      return { success: true };
+    } catch (err: any) {
+      console.error("Erreur lors de l'ajout du wallet: ", err);
+      setWalletError("Erreur lors de l'ajout du wallet");
+      return { success: false, error: err.response.data.message };
     }
   };
+
+
+  /**
+   * Supprime un wallet par son ID
+   * @param walletId - L'ID du wallet à supprimer
+   * @returns {Promise<OperationResult>} - Réponse succès ou erreur
+   */
+  const deleteWalletById = async (walletId: string): Promise<OperationResult> => {
+    try {
+      setWalletError(null);
+      await deleteWallet(walletId);
+      
+      await fetchWallets();
+      return { success: true };
+    } catch (err: any) {
+      console.error("Erreur lors de la suppression du wallet: ", err);
+      setWalletError("Erreur lors de la suppression du wallet");
+      return { success: false, error: err.response.data.message };
+    }
+  };
+
+  /**
+   * Définit un wallet comme principal
+   * @param walletId - L'ID du wallet à définir comme principal
+   * @returns {Promise<OperationResult>} - Réponse succès ou erreur
+   */
+  const setPrimaryWalletId = async (walletId: string): Promise<OperationResult> => {
+    try {
+      setWalletError(null);
+      await setPrimaryWallet(walletId);
+      
+      await fetchWallets();
+      return { success: true };
+
+    } catch (err: any) {
+      setWalletError("Erreur lors de la mise à jour du wallet principal");
+      console.error("Erreur lors de la mise à jour du wallet principal: ", err);
+      return { success: false, error: err.response.data.message };
+    }
+  };
+
 
   return {
     wallets,
     selectedWallet,
     walletData,
-    isLoading,
-    error,
+    isWalletLoading,
+    walletError,
     fetchWallets,
     selectWallet,
-    refetch,
+    addNewWallet,
+    deleteWalletById,
+    setPrimaryWalletId,
   };
 }

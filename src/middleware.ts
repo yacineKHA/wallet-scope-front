@@ -8,6 +8,12 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isProtected = pathname.startsWith("/dashboard");
 
+  // rediriger vers dashboard ou login selon si auth ou pas
+  if (pathname === "/") {
+    const url = new URL(token ? "/dashboard" : "/login", req.url);
+    return NextResponse.redirect(url);
+  }
+
   if (isAuthPage && token) {
     const url = new URL("/dashboard", req.url);
     return NextResponse.redirect(url);
@@ -22,5 +28,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/", "/dashboard/:path*", "/login", "/register"],
 };

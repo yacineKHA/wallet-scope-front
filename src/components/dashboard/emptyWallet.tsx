@@ -1,5 +1,6 @@
 import { Wallet as WalletIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JSX } from "react";
 
 interface EmptyWalletProps {
     title: string;
@@ -13,7 +14,7 @@ const EmptyWallet = ({
     description, 
     buttonText,
     onButtonClick 
-}: EmptyWalletProps) => {
+}: EmptyWalletProps): JSX.Element => {
     return (
         <div className="container mx-auto p-6">
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">

@@ -1,37 +1,37 @@
 "use client";
 
 import { useEffect } from "react";
-import useUser from "@/lib/hooks/useUser";
 import useWallet from "@/lib/hooks/useWallet";
 import LoadingSpinner from "@/components/dashboard/loadingSpinner";
 import EmptyWallet from "@/components/dashboard/emptyWallet";
 import WalletSummary from "@/components/dashboard/walletSummary";
 import ListOfCoins from "@/components/dashboard/listOfCoins";
+import { useAuthStore } from "@/store/authStore";
 
 export default function DashboardPage() {
-    const { user, isLoading: userLoading, isAuthenticated, error: userError } = useUser();
-    const { walletData, isLoading, error, fetchWallets } = useWallet();
+    const { isAuthenticated, isAuthLoading } = useAuthStore();
+    const { walletData, isWalletLoading, walletError, fetchWallets } = useWallet();
 
     useEffect(() => {
-        if (isAuthenticated && !userLoading) {
+        if (isAuthenticated && !isAuthLoading) {
             fetchWallets();
         }
 
-    }, [isAuthenticated, userLoading]);
+    }, [isAuthenticated, isAuthLoading]);
 
-    if (userError) {
+    if (walletError) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="text-red-500">{userError}</div>
+                <div className="text-red-500">{walletError}</div>
             </div>
         );
     }
 
-    if (userLoading || isLoading) {
+    if (isAuthLoading || isWalletLoading) {
         return <LoadingSpinner />;
     }
 
-    if (error) {
+    if (walletError) {
         return (
             <EmptyWallet
                 title="Aucun portefeuille trouvé"

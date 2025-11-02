@@ -2,7 +2,16 @@ import { useState } from "react";
 import { authAPI } from "../api/auth";
 import { AxiosError } from "axios";
 
-export const useRegister = () => {
+interface UseRegisterResponse {
+  signup: (email: string, username:string, password: string) => Promise<void>;
+  signupError: string | null;
+  isSignupLoading: boolean;
+}
+
+/**
+ * Hook pour l'inscription utilisateur via email, username et mot de passe
+ */
+export default function useRegister (): UseRegisterResponse {
   const [signupError, setSignupError] = useState<string | null>(null);
   const [isSignupLoading, setIsSignupLoading] = useState<boolean>(false);
 

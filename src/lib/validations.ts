@@ -38,5 +38,12 @@ export const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// Validation pour l'ajout d'un wallet
+export const addWalletSchema = z.object({
+  walletName: z.string().min(2, "Nom du wallet requis"),
+  walletAddress: z.string().min(26, "Adresse du wallet requise (minimum 26 caractères)"),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type AddWalletFormData = z.infer<typeof addWalletSchema>;

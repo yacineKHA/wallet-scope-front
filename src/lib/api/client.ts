@@ -15,6 +15,7 @@ const excludedUrls = [
   "/auth/register",
   "/auth/refresh",
   "/auth/logout",
+  "/user/me",
 ];
 
 apiClient.interceptors.response.use(
