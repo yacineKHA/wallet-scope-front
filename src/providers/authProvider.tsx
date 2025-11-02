@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { apiClient } from "@/lib/api/client";
 import { useAuthStore } from "@/store/authStore";
+import { AxiosError } from "axios";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const { setUser, clearUser } = useAuthStore();
@@ -12,8 +13,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         try {
           const response = await apiClient.get("/user/me");
           setUser(response.data.data);
-        } catch (err: any) {
-          if (err?.response?.status === 401) {
+        } catch (err) {
+          if (err instanceof AxiosError && err.response?.status === 401) {
             console.info("Utilisateur non authentifié");
           } else {
             console.error("Erreur lors de l'init de l'auth: ", err);

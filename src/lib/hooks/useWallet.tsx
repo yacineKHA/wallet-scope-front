@@ -7,6 +7,7 @@ import {
   addWallet,
 } from "../api/wallet";
 import { Wallet, WalletData } from "@/types/wallet";
+import { AxiosError } from "axios";
 
 interface UseWalletResponse {
   wallets: Wallet[];
@@ -16,7 +17,10 @@ interface UseWalletResponse {
   walletError: string | null;
   fetchWallets: () => Promise<OperationResult>;
   selectWallet: (wallet: Wallet) => Promise<OperationResult>;
-  addNewWallet: (walletAddress: string, walletName: string) => Promise<OperationResult>;
+  addNewWallet: (
+    walletAddress: string,
+    walletName: string
+  ) => Promise<OperationResult>;
   deleteWalletById: (walletId: string) => Promise<OperationResult>;
   setPrimaryWalletId: (walletId: string) => Promise<OperationResult>;
 }
@@ -49,12 +53,13 @@ export default function useWallet(): UseWalletResponse {
       const data = await getWallet(wallet.walletAddress);
       setWalletData(data);
       return { success: true };
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erreur lors de la récupération du wallet:", err);
-    
-      setWalletError("Erreur lors du chargement du wallet");
-      return { success: false, error: err.response.data.message };
-
+      const errorMessage = err instanceof AxiosError 
+        ? err.response?.data?.message || "Erreur lors du chargement du wallet"
+        : "Erreur lors du chargement du wallet";
+      setWalletError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setIsWalletLoading(false);
     }
@@ -80,11 +85,14 @@ export default function useWallet(): UseWalletResponse {
         setIsWalletLoading(false);
       }
       return { success: true };
-    } catch (err: any) {
-      console.error("Erreur lors de la récupération des wallets: ", err);
-      setWalletError("Erreur lors du chargement des wallets");
+    } catch (err) {
+      console.error("Erreur lors de la récupération des wallets:", err);
+      const errorMessage = err instanceof AxiosError
+        ? err.response?.data?.message || "Erreur lors du chargement des wallets"
+        : "Erreur lors du chargement des wallets";
+      setWalletError(errorMessage);
       setIsWalletLoading(false);
-      return { success: false, error: err.response.data.message };
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -92,40 +100,61 @@ export default function useWallet(): UseWalletResponse {
    * Ajoute un nouveau wallet
    * @param walletAddress - L'adresse du wallet à ajouter
    * @param walletName - Le nom du wallet à ajouter
-   * @returns {Promise<OperationResult>} - Réponse de succès ou erreur
+   * @returns {Promise<OperationResult>} - Réponse succès ou erreur
    */
-  const addNewWallet = async (walletAddress: string, walletName: string): Promise<OperationResult> => {
+  const addNewWallet = async (
+    walletAddress: string,
+    walletName: string
+  ): Promise<OperationResult> => {
     try {
       setWalletError(null);
       await addWallet(walletAddress, walletName);
-      
-      await fetchWallets();
+
+      // Refresh en arrière-plan
+      try {
+        await fetchWallets();
+      } catch {
+        console.warn("Impossible de rafraîchir la liste, mais l'ajout a réussi");
+      }
 
       return { success: true };
-    } catch (err: any) {
-      console.error("Erreur lors de l'ajout du wallet: ", err);
-      setWalletError("Erreur lors de l'ajout du wallet");
-      return { success: false, error: err.response.data.message };
+    } catch (err) {
+      console.error("Erreur lors de l'ajout du wallet:", err);
+      const errorMessage = err instanceof AxiosError
+        ? err.response?.data?.message || "Erreur lors de l'ajout du wallet"
+        : "Erreur lors de l'ajout du wallet";
+      setWalletError(errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
-
 
   /**
    * Supprime un wallet par son ID
    * @param walletId - L'ID du wallet à supprimer
    * @returns {Promise<OperationResult>} - Réponse succès ou erreur
    */
-  const deleteWalletById = async (walletId: string): Promise<OperationResult> => {
+  const deleteWalletById = async (
+    walletId: string
+  ): Promise<OperationResult> => {
     try {
       setWalletError(null);
       await deleteWallet(walletId);
-      
-      await fetchWallets();
+
+      // Refresh en arrière-plan
+      try {
+        await fetchWallets();
+      } catch {
+        console.warn("Impossible de rafraîchir la liste, mais la suppression a réussi");
+      }
+
       return { success: true };
-    } catch (err: any) {
-      console.error("Erreur lors de la suppression du wallet: ", err);
-      setWalletError("Erreur lors de la suppression du wallet");
-      return { success: false, error: err.response.data.message };
+    } catch (err) {
+      console.error("Erreur lors de la suppression du wallet:", err);
+      const errorMessage = err instanceof AxiosError
+        ? err.response?.data?.message || "Erreur lors de la suppression du wallet"
+        : "Erreur lors de la suppression du wallet";
+      setWalletError(errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -134,21 +163,30 @@ export default function useWallet(): UseWalletResponse {
    * @param walletId - L'ID du wallet à définir comme principal
    * @returns {Promise<OperationResult>} - Réponse succès ou erreur
    */
-  const setPrimaryWalletId = async (walletId: string): Promise<OperationResult> => {
+  const setPrimaryWalletId = async (
+    walletId: string
+  ): Promise<OperationResult> => {
     try {
       setWalletError(null);
       await setPrimaryWallet(walletId);
-      
-      await fetchWallets();
-      return { success: true };
 
-    } catch (err: any) {
-      setWalletError("Erreur lors de la mise à jour du wallet principal");
-      console.error("Erreur lors de la mise à jour du wallet principal: ", err);
-      return { success: false, error: err.response.data.message };
+      // Refresh en arrière-plan
+      try {
+        await fetchWallets();
+      } catch {
+        console.warn("Impossible de rafraîchir la liste, mais la mise à jour a réussi");
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du wallet principal:", err);
+      const errorMessage = err instanceof AxiosError
+        ? err.response?.data?.message || "Erreur lors de la mise à jour du wallet principal"
+        : "Erreur lors de la mise à jour du wallet principal";
+      setWalletError(errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
-
 
   return {
     wallets,
